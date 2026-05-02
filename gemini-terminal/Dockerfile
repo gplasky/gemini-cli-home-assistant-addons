@@ -1,89 +1,117 @@
-ARG BUILD_FROM
-FROM ${BUILD_FROM}
+# Global ARGs (available in FROM instructions)
+ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:trixie
+ARG BUILD_ARCH
 
-# Install system packages and development tools
-# Added github-cli to the list
-RUN apk add --no-cache \
-    bash \
-    curl \
-    nano \
-    nodejs \
-    npm \
-    python3 \
-    py3-pip \
-    py3-requests \
-    py3-aiohttp \
-    py3-yaml \
-    py3-beautifulsoup4 \
-    git \
-    vim \
-    wget \
-    jq \
-    tree \
-    tmux \
-    yq \
-    coreutils \
-    util-linux \
-    github-cli
+## Stage 1: Build hab CLI from source (pinned release)
+FROM golang:1.24-trixie AS hab-builder
 
-# Install Gemini CLI via npm, then rebuild native modules for Alpine musl libc.
-#
-# Problem: tree-sitter-bash ships glibc-only prebuilds (prebuilds/linux-x64/).
-# node-gyp-build prefers prebuilds/ over build/, so the glibc binary is loaded
-# at runtime, causing SIGSEGV (exit 139) when the Shell tool parses bash commands.
-#
-# Fix: delete the glibc prebuilds, then rebuild from source so node-gyp-build
-# falls through to build/Release/ which is compiled against musl.
-#
-# @lydell/node-pty-linux-x64 is also a glibc prebuild; replace it with the
-# musl-compiled pty.node from node-pty/build/Release/.
-RUN apk add --no-cache --virtual .build-deps \
-    build-base \
-    g++ \
-    make \
-    linux-headers \
-    && npm install -g node-gyp @google/gemini-cli@latest \
-    && GEMINI_MODS=/usr/local/lib/node_modules/@google/gemini-cli/node_modules \
-    # Rebuild tree-sitter-bash for musl
-    && TSDIR="$GEMINI_MODS/tree-sitter-bash" \
-    && rm -rf "$TSDIR/prebuilds" \
-    && cd "$TSDIR" && node-gyp rebuild \
-    # Replace @lydell/node-pty-linux-x64 glibc binary with the musl-compiled one
-    && LYDELL_PTY="$GEMINI_MODS/@lydell/node-pty-linux-x64/pty.node" \
-    && COMPILED_PTY="$GEMINI_MODS/node-pty/build/Release/pty.node" \
-    && [ -f "$LYDELL_PTY" ] && [ -f "$COMPILED_PTY" ] && cp "$COMPILED_PTY" "$LYDELL_PTY" || true \
-    && npm cache clean --force \
-    && apk del --no-cache .build-deps
+ARG BUILD_ARCH
+ARG HAB_VERSION=1.6.4
+RUN git clone --depth 1 --branch "${HAB_VERSION}" https://github.com/balloob/home-assistant-build-cli.git /src
+WORKDIR /src
 
-# Install ha CLI so Gemini can run 'ha' commands to control Home Assistant.
-# The binary connects to http://supervisor/ using $SUPERVISOR_TOKEN, both of
-# which are automatically available inside HA add-on containers.
-RUN ARCH=$(uname -m) && \
-    case "$ARCH" in \
-        x86_64)  HA_ARCH="amd64" ;; \
-        aarch64) HA_ARCH="aarch64" ;; \
-        armv7l)  HA_ARCH="armv7" ;; \
-        *) echo "Unsupported arch for ha CLI: $ARCH" && exit 1 ;; \
-    esac && \
-    curl -fsSL -o /usr/local/bin/ha \
-        "https://github.com/home-assistant/cli/releases/latest/download/ha_${HA_ARCH}" && \
-    chmod +x /usr/local/bin/ha
+# Cross-compile for the target architecture
+RUN GOARCH=$([ "$BUILD_ARCH" = "aarch64" ] && echo "arm64" || echo "amd64") \
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /hab .
 
-# Install uv for running ha-mcp (Python package manager/runner)
-RUN apk add --no-cache uv
+## Stage 2: Main add-on image
+FROM $BUILD_FROM
 
-# Pre-install ha-mcp to ensure it's ready to use
-RUN pip3 install --break-system-packages --no-cache-dir ha-mcp==3.5.1
+# Build arguments
+ARG BUILD_VERSION
+ARG BUILD_ARCH
+ARG TTYD_VERSION=1.7.7
+ARG OPENCODE_VERSION=latest
 
-# Create directory for Gemini configuration and set working directory
-RUN mkdir -p /config/gemini-config
-WORKDIR /config
+# Environment for better Node.js performance
+ENV NODE_ENV=production \
+    npm_config_update_notifier=false \
+    npm_config_fund=false
 
-# Copy startup script and modular scripts
-COPY run.sh /run.sh
-COPY scripts/ /opt/scripts/
-RUN chmod +x /run.sh \
-    && chmod +x /opt/scripts/*.sh
+# Install system dependencies in a single layer
+# - nodejs/npm: Required for Gemini CLI
+# - git: Required by Gemini CLI for version control operations
+# - jq: JSON processing for helper scripts
+# - curl/ca-certificates: For downloading ttyd
+# - procps: Provides pgrep for health check
+# - tmux: Session persistence to prevent multiple Gemini CLI instances
+# - chromium: Headless browser for screenshot_url MCP tool (visual verification)
+# - nano, vim, tree, yq: User requested terminal tools
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        chromium \
+        curl \
+        git \
+        jq \
+        nodejs \
+        npm \
+        procps \
+        python3 \
+        python3-venv \
+        tmux \
+        nano \
+        vim \
+        tree \
+        yq \
+    && rm -rf /var/lib/apt/lists/*
 
-# Use exec form for better signal handling
-CMD ["/run.sh"]
+# Install GitHub CLI (gh)
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install gh -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Chromium path for puppeteer-core (used by screenshot MCP tool)
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Install ttyd from GitHub releases (not in Debian repos)
+RUN ARCH=$([ "$BUILD_ARCH" = "aarch64" ] && echo "aarch64" || echo "x86_64") \
+    && curl -fsSL "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.${ARCH}" -o /usr/bin/ttyd \
+    && chmod +x /usr/bin/ttyd
+
+# Copy hab CLI binary built from source (pinned release)
+COPY --from=hab-builder /hab /usr/local/bin/hab
+
+# Install zigporter CLI in an isolated Python virtual environment
+RUN python3 -m venv /opt/zigporter-venv \
+    && /opt/zigporter-venv/bin/pip install --no-cache-dir zigporter \
+    && ln -s /opt/zigporter-venv/bin/zigporter /usr/local/bin/zigporter
+
+# Install Gemini CLI and Prettier globally
+RUN npm install -g @google/gemini-cli@latest prettier \
+    && npm cache clean --force
+
+# Copy package.json files first for better layer caching
+COPY rootfs/opt/ha-mcp-server/package*.json /opt/ha-mcp-server/
+
+# Install MCP dependencies
+RUN (cd /opt/ha-mcp-server && npm install --omit=dev) \
+    && npm cache clean --force
+
+# Copy root filesystem (server code, scripts, etc.)
+COPY rootfs /
+
+# Make scripts executable and create runtime directories
+RUN chmod +x /usr/local/bin/* \
+    && chmod +x /etc/s6-overlay/s6-rc.d/init-gemini/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/ha-gemini/run \
+    && chmod +x /etc/profile.d/hab-esphome.sh \
+    && chmod +x /etc/profile.d/zigporter-z2m.sh \
+    && mkdir -p /data/.local/share/gemini /data/.config/gemini
+
+# Set working directory to HA config (mounted at runtime)
+WORKDIR /homeassistant
+
+# Health check - verify ttyd is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD pgrep ttyd > /dev/null || exit 1
+
+# Labels for Home Assistant
+LABEL \
+    io.hass.name="Gemini Terminal" \
+    io.hass.description="Terminal interface for Google's Gemini CLI with deep MCP integration" \
+    io.hass.type="addon" \
+    io.hass.version="${BUILD_VERSION}"
