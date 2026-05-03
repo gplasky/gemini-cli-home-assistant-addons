@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.4
+- **🚀 Major Stability Refactor**
+  - Completely refactored the add-on foundation with stability improvements inspired by the **OpenCode** project (https://github.com/magnusoverli/opencode/).
+  - **Fixed MCP Authentication & Loading**: Implemented a more robust MCP server configuration that correctly handles dynamic authentication and prevents "Failed to configure ha-mcp" errors.
+  - **Eliminated Segmentation Faults**: Resolved persistent `Segmentation fault (core dumped)` crashes by adopting a more stable containerized Node.js environment and execution flow.
+  - **Fixed CLI Update Loops**: Corrected the update logic to prevent recurring prompts to update the Gemini CLI and resolved associated `Exit Code: 199` errors.
+  - **Resolved Boot Loops**: Finalized fixes for "unbound variable" errors in startup scripts that caused continuous container restarts.
+  - **Improved Config Schema**: Updated `map` property and access token schema for better compatibility with the latest Home Assistant standards.
+  - **Better TTY Handling**: Enhanced terminal session management for more reliable keyboard input and session persistence.
+
 ## 2.0.5
 - **🔍 Improved Log Visibility**
   - Implemented real-time log streaming from Gemini internal logs to the Home Assistant "Logs" tab.
