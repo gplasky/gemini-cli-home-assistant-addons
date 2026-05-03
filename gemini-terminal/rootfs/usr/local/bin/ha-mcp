@@ -19,6 +19,7 @@ usage() {
     echo "  disable    Disable the Home Assistant MCP server"
     echo "  status     Show current MCP server status"
     echo "  test       Test the MCP server connection"
+    echo "  run        Start the MCP server (for stdio)"
     echo "  help       Show this help message"
     echo ""
     echo "When enabled, you can ask OpenCode to interact with Home Assistant:"
@@ -110,7 +111,7 @@ test_mcp() {
         # Uses timeout to prevent hanging, sends proper MCP JSON-RPC initialize
         local mcp_response
         mcp_response=$(echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | \
-            timeout 10s node /opt/ha-mcp-server/index.js 2>&1 | head -1)
+            timeout 10s node /opt/ha-mcp-server/index.js 2>&1 | grep '"jsonrpc"' | head -1)
         
         if echo "$mcp_response" | grep -q '"result"'; then
             echo "MCP server is ready."
@@ -134,6 +135,16 @@ test_mcp() {
     fi
 }
 
+start_mcp() {
+    if [ -z "$SUPERVISOR_TOKEN" ]; then
+        # If running from Gemini CLI, we might need to export it from HA_TOKEN if available
+        if [ -n "$HA_TOKEN" ]; then
+            export SUPERVISOR_TOKEN="$HA_TOKEN"
+        fi
+    fi
+    node /opt/ha-mcp-server/index.js
+}
+
 case "${1:-}" in
     enable)
         enable_mcp
@@ -147,12 +158,16 @@ case "${1:-}" in
     test)
         test_mcp
         ;;
+    run)
+        start_mcp
+        ;;
     help|--help|-h)
         usage
         ;;
     *)
         if [ -z "$1" ]; then
-            usage
+            # If no command is given, we assume it's being called as an MCP server
+            start_mcp
         else
             echo "Error: Unknown command '$1'"
             echo ""

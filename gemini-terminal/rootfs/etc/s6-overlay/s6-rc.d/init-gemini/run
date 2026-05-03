@@ -159,13 +159,9 @@ fi
 if [ "$MCP_ENABLED" = "true" ]; then
     bashio::log.info "Configuring MCP server..."
     # The ha-mcp-server built from OpenCode is located at /opt/ha-mcp-server/build/index.js
-    jq --arg token "$SUPERVISOR_TOKEN" '.mcpServers["home-assistant"] = {
-        "command": "node",
-        "args": ["/opt/ha-mcp-server/build/index.js"],
-        "env": {
-            "HA_URL": "http://supervisor/core",
-            "HA_TOKEN": $token
-        }
+    jq '.mcpServers["home-assistant"] = {
+        "command": "ha-mcp",
+        "args": [],
     }' "$GEMINI_USER_DIR/settings.json" > "$GEMINI_USER_DIR/settings.tmp" && mv "$GEMINI_USER_DIR/settings.tmp" "$GEMINI_USER_DIR/settings.json"
 fi
 
