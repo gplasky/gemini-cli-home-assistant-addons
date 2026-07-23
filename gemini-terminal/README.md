@@ -1,12 +1,12 @@
-# Gemini Terminal for Home Assistant
+# Antigravity CLI for Home Assistant
 
 A secure, web-based terminal with Google's **Antigravity CLI** (`agy`) pre-installed for Home Assistant.
 
-![Gemini Terminal Screenshot](https://github.com/oded996/gemini-cli-home-assistant-addons/raw/main/gemini-terminal/screenshot.png)
+![Antigravity CLI Screenshot](https://github.com/oded996/gemini-cli-home-assistant-addons/raw/main/gemini-terminal/screenshot.png)
 
-*Gemini Terminal running in Home Assistant*
+*Antigravity CLI running in Home Assistant*
 
-## What is Gemini Terminal?
+## What is Antigravity CLI?
 
 This add-on provides a web-based terminal interface pre-installed with Google's official **Antigravity CLI** (`agy`), allowing you to use powerful AI capabilities directly from your Home Assistant dashboard. It gives you direct access to the AI assistant through a terminal, ideal for:
 
@@ -51,7 +51,7 @@ persist-install pip requests
 ## Installation
 
 1. Add this repository to your Home Assistant add-on store: `https://github.com/oded996/gemini-cli-home-assistant-addons`
-2. Install the **Gemini Terminal** add-on.
+2. Install the **Antigravity CLI** add-on.
 3. (Optional) Enter your **Gemini API Key** in the configuration tab.
 4. Start the add-on.
 5. Click "OPEN WEB UI" or use the sidebar icon to access.

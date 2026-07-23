@@ -1,6 +1,6 @@
 #!/command/with-contenv bashio
 # ==============================================================================
-# Gemini Terminal - Initialization Service (oneshot)
+# Antigravity CLI - Initialization Service (oneshot)
 # Runs once at container startup to prepare the environment
 # ==============================================================================
 

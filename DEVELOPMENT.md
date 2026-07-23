@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide covers local development and testing workflows for the Gemini Terminal add-on.
+This guide covers local development and testing workflows for the Antigravity CLI add-on.
 
 ## Local Container Testing
 
