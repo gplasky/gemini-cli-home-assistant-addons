@@ -16,8 +16,8 @@ fi
 # Change to Home Assistant config directory
 cd /homeassistant
 
-# Set up PATH - ensure node, npm globals, and standard bins are available
-export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+# Set up PATH - ensure node, npm globals, agy, and standard bins are available
+export PATH="/usr/local/bin:/usr/bin:/bin:/root/.antigravity/bin:/data/.antigravity/bin:/root/.local/bin:/data/.local/bin:$PATH"
 
 # Configure git if not already configured
 if [ ! -f "${HOME}/.gitconfig" ]; then
@@ -70,7 +70,8 @@ echo -e "${GRAY}Customize AI behavior by editing ${NC}${GREEN}AGENTS.md${NC} ${G
 echo ""
 
 # Launch Antigravity CLI (agy)
-agy
+AGY_BIN=$(which agy 2>/dev/null || find /root /usr /data -name "agy" -type f 2>/dev/null | head -n 1 || echo "agy")
+"$AGY_BIN"
 
 # When agy exits, show help and drop to bash
 show_shell_help

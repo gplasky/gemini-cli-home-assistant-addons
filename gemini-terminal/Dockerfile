@@ -82,7 +82,9 @@ RUN python3 -m venv /opt/zigporter-venv \
 
 # Install Antigravity CLI (agy) and Prettier globally
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash \
-    && ( [ -f /root/.antigravity/bin/agy ] && cp /root/.antigravity/bin/agy /usr/local/bin/agy || true ) \
+    && ( AGY_PATH=$(find /root /usr /data -name "agy" -type f 2>/dev/null | head -n 1) \
+         && [ -n "$AGY_PATH" ] && cp "$AGY_PATH" /usr/local/bin/agy || true ) \
+    && chmod +x /usr/local/bin/agy \
     && npm install -g prettier \
     && npm cache clean --force
 
