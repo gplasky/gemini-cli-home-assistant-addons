@@ -1,17 +1,17 @@
 # Gemini Terminal for Home Assistant
 
-Bring the power of Google's **Gemini CLI** directly to your Home Assistant dashboard! 
+Bring the power of Google's **Antigravity CLI** (`agy`) directly to your Home Assistant dashboard! 
 
-Gemini Terminal provides an AI-driven, persistent web terminal pre-configured with the Home Assistant MCP (`ha-mcp`) server, giving Gemini native access to your smart home environment.
+Gemini Terminal provides an AI-driven, persistent web terminal pre-configured with the Home Assistant MCP (`ha-mcp`) server, giving `agy` native access to your smart home environment.
 
 ---
 
 ## 🚀 Key Features
 
-* **Google Gemini CLI Integration**: A full-featured web terminal with the official Gemini CLI pre-installed.
-* **Native Home Assistant Control**: Thanks to the integrated `ha-mcp` server, Gemini can read states, call services, and interact with your entities natively.
+* **Antigravity CLI Integration**: A full-featured web terminal pre-installed with Google's official `agy` binary (with backward-compatible support for `gemini` commands).
+* **Native Home Assistant Control**: Thanks to the integrated `ha-mcp` server (`mcp_config.json`), the AI can read states, call services, and interact with your entities natively.
 * **Session Persistence**: Built-in `tmux` support means you can navigate away or refresh without losing your terminal session or AI conversation.
-* **Smart Environment Context**: Automatically creates a `GEMINI.md` file loaded with system info, architecture, and recent logs to ground Gemini in your specific setup.
+* **Smart Environment Context**: Automatically creates a `GEMINI.md` file loaded with system info, architecture, and recent logs to ground the AI in your specific setup.
 * **Seamless Authentication**: Configure your `GEMINI_API_KEY` straight from the Home Assistant add-on UI.
 * **Direct Config Access**: Boots directly into your `/config` directory for immediate YAML editing and troubleshooting.
 
@@ -57,4 +57,4 @@ This project was built on the incredible work of others in the Home Assistant co
 ## 📜 License
 
 This repository is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
-*Note: The Gemini CLI tool itself is subject to Google's Terms of Service.*
+*Note: The Antigravity CLI tool itself is subject to Google's Terms of Service.*
