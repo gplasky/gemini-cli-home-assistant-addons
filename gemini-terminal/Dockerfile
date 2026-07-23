@@ -115,7 +115,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Labels for Home Assistant
 LABEL \
-    io.hass.name="Gemini Terminal" \
-    io.hass.description="Terminal interface for Google's Gemini CLI with deep MCP integration" \
+    io.hass.name="Antigravity CLI" \
+    io.hass.description="Terminal interface for Google's Antigravity CLI (agy) with deep MCP integration" \
     io.hass.type="addon" \
     io.hass.version="${BUILD_VERSION}"

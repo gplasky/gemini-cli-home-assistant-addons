@@ -6,7 +6,7 @@
 show_banner() {
     clear
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                    🤖 Gemini Terminal                        ║"
+    echo "║                    🤖 Antigravity CLI                        ║"
     echo "║                   Interactive Session Picker                ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo ""

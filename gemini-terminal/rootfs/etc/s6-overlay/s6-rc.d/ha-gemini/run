@@ -14,7 +14,7 @@ if [ -f /data/.env_vars ]; then
 fi
 
 bashio::log.info "=============================================="
-bashio::log.info "  Gemini Terminal (ttyd + ingress)"
+bashio::log.info "  Antigravity CLI (ttyd + ingress)"
 bashio::log.info "=============================================="
 
 # ==============================================================================

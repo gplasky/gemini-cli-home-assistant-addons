@@ -4,7 +4,7 @@
 # Runs once at container startup to prepare the environment
 # ==============================================================================
 
-bashio::log.info "Initializing Gemini Terminal..."
+bashio::log.info "Initializing Antigravity CLI..."
 
 # Save addon version for the terminal banner
 bashio::addon.version > /data/.addon_version

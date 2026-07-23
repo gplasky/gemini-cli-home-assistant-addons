@@ -7,7 +7,7 @@ args:
   TTYD_VERSION: "1.7.7"
 
 labels:
-  org.opencontainers.image.title: "Gemini Terminal"
-  org.opencontainers.image.description: "Terminal interface for Google's Gemini CLI"
+  org.opencontainers.image.title: "Antigravity CLI"
+  org.opencontainers.image.description: "Terminal interface for Google's Antigravity CLI (agy) with deep MCP integration"
   org.opencontainers.image.source: "https://github.com/oded996/gemini-cli-home-assistant-addons"
   org.opencontainers.image.licenses: "Apache-2.0"

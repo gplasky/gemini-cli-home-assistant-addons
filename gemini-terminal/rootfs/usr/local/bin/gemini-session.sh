@@ -41,7 +41,7 @@ ADDON_VERSION=$(cat /data/.addon_version 2>/dev/null || echo "unknown")
 show_banner() {
     clear
     echo ""
-    echo -e "${BLUE}${BOLD}Gemini Terminal${NC} ${GRAY}v${ADDON_VERSION}${NC}"
+    echo -e "${BLUE}${BOLD}Antigravity CLI${NC} ${GRAY}v${ADDON_VERSION}${NC}"
     echo -e "${GRAY}Terminal interface powered by Antigravity CLI (agy)${NC}"
     echo ""
     echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
