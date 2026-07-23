@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0
+- **🚀 Antigravity CLI Migration (`agy`)**
+  - Transitioned CLI engine from deprecated Gemini CLI to Google's official **Antigravity CLI** (`agy`).
+  - Added backward-compatible `/usr/local/bin/gemini` command wrapper.
+  - Migrated MCP server configuration to standalone `mcp_config.json`.
+  - Updated branding and add-on icons to official Antigravity branding.
+
 ## 2.6.4
 - **🚀 Major Stability Refactor**
   - Completely refactored the add-on foundation with stability improvements inspired by the **OpenCode** project (https://github.com/magnusoverli/opencode/).
