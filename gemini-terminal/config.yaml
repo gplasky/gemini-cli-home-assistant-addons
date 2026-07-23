@@ -90,5 +90,7 @@ schema:
 backup_exclude:
   - ".npm/*"
   - ".cache/*"
+  - ".local/share/antigravity/cache/*"
   - ".local/share/gemini/cache/*"
+  - ".antigravity/cache/*"
   - ".env_vars"

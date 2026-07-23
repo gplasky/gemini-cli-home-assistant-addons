@@ -1,10 +1,10 @@
 # Gemini Terminal
 
-A terminal interface for Google's Gemini CLI in Home Assistant.
+A terminal interface powered by Google's **Antigravity CLI** (`agy`) in Home Assistant.
 
 ## About
 
-This add-on provides a web-based terminal with the Google Gemini CLI pre-installed, allowing you to access Gemini's powerful AI capabilities directly from your Home Assistant dashboard. The terminal provides full access to Gemini's code generation, explanation, and problem-solving capabilities, with deep integration into Home Assistant.
+This add-on provides a web-based terminal pre-installed with **Antigravity CLI** (`agy`), allowing you to access powerful AI capabilities directly from your Home Assistant dashboard. Following Google's transition from Gemini CLI to Antigravity CLI, `agy` is the official binary powering this terminal, with backward-compatible support for `gemini` command aliases and `GEMINI.md` context files.
 
 ## Installation
 
@@ -12,37 +12,41 @@ This add-on provides a web-based terminal with the Google Gemini CLI pre-install
 2. Install the **Gemini Terminal** add-on.
 3. Start the add-on.
 4. Click **"OPEN WEB UI"** to access the terminal.
-5. On first use, follow the OAuth prompts to log in to your Google account (or enter a `gemini_api_key` in the configuration for headless login).
+5. On first use, follow the prompts to log in to your Google account (or enter a `gemini_api_key` in the configuration for headless login).
 
 ## Configuration
 
-Your authentication credentials and session data are stored in the `/data/.config/gemini` directory and will persist across add-on updates and restarts.
+Your authentication credentials and session data are stored in the `/data/.config/antigravity` (and `/data/.config/gemini`) directory and will persist across add-on updates and restarts. MCP server configuration is maintained in `mcp_config.json`.
 
 ### Options
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `gemini_api_key` | `""` | Optional Google Gemini API key for headless authentication |
+| `gemini_api_key` | `""` | Optional Google API key for headless authentication |
 | `gemini_debug` | `false` | Enable verbose debugging and show internal logs in add-on logs |
-| `auto_launch_gemini` | `true` | Automatically start Gemini when opening the terminal |
+| `auto_launch_gemini` | `true` | Automatically start AI terminal session on open |
 
-| `enable_ha_mcp` | `true` | Enable Home Assistant MCP server integration. |
+| `enable_ha_mcp` | `true` | Enable Home Assistant MCP server integration (`mcp_config.json`). |
 | `ha_smart_context` | `true` | Automatically generate HA context (`GEMINI.md`) for AI awareness. |
 | `persistent_apk_packages` | `[]` | APK packages to install on every startup. |
 | `persistent_pip_packages` | `[]` | Python packages to install on every startup. |
 
 ## Usage
 
-Gemini launches automatically when you open the terminal. You can also start Gemini manually with:
+Antigravity CLI launches automatically when you open the terminal. You can also start the session manually with:
 
 ```bash
+agy
+# or legacy alias:
 gemini
 ```
 
 ### Common Commands
 
-- `gemini` - Start an interactive Gemini session.
-- `gemini --help` - See all available commands.
+- `agy` (or `gemini`) - Start an interactive session.
+- `agy --help` - See all available commands.
+- `agy -r latest` - Resume your most recent conversation.
+- `ha-context --full` - Refresh the Home Assistant context (`GEMINI.md`) with full entity details.
 - `gemini -r latest` - Resume your most recent conversation.
 - `ha-context --full` - Refresh the Home Assistant context (`GEMINI.md`) with full entity details.
 

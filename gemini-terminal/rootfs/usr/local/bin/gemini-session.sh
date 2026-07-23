@@ -42,13 +42,13 @@ show_banner() {
     clear
     echo ""
     echo -e "${BLUE}${BOLD}Gemini Terminal${NC} ${GRAY}v${ADDON_VERSION}${NC}"
-    echo -e "${GRAY}Terminal interface for Google's Gemini CLI${NC}"
+    echo -e "${GRAY}Terminal interface powered by Antigravity CLI (agy)${NC}"
     echo ""
     echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
     echo ""
 }
 
-# Function to show shell help (after exiting gemini)
+# Function to show shell help (after exiting agy)
 show_shell_help() {
     echo ""
     echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
@@ -56,7 +56,7 @@ show_shell_help() {
     echo -e "${WHITE}Dropped to shell.${NC} Working directory: ${CYAN}/homeassistant${NC}"
     echo ""
     echo -e "${BOLD}Commands${NC}"
-    echo -e "  ${GREEN}gemini${NC}            Restart the AI coding agent"
+    echo -e "  ${GREEN}agy${NC} (or ${GREEN}gemini${NC})  Restart the AI coding agent"
     echo -e "  ${GREEN}ha-logs${NC} ${GRAY}<type>${NC}    View logs (core, error, supervisor, host)"
     echo -e "  ${GREEN}hab${NC} ${GRAY}<cmd>${NC}         HA admin CLI (entities, areas, dashboards, backups)"
     echo -e "  ${GREEN}zigporter${NC} ${GRAY}<cmd>${NC}   Zigbee tools (rename, inspect, stale, mesh)"
@@ -69,10 +69,10 @@ echo -e "${WHITE}Working directory:${NC} ${CYAN}/homeassistant${NC}"
 echo -e "${GRAY}Customize AI behavior by editing ${NC}${GREEN}AGENTS.md${NC} ${GRAY}in your config folder${NC}"
 echo ""
 
-# Launch Gemini
-gemini --no-acp
+# Launch Antigravity CLI (agy)
+agy
 
-# When gemini exits, show help and drop to bash
+# When agy exits, show help and drop to bash
 show_shell_help
 
 # Start interactive bash shell
