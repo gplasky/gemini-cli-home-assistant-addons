@@ -1,6 +1,6 @@
 # Global ARGs (available in FROM instructions)
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:trixie
-ARG BUILD_ARCH
+ARG BUILD_ARCH=amd64
+ARG BUILD_FROM=ghcr.io/home-assistant/${BUILD_ARCH}-base-debian:trixie
 
 ## Stage 1: Build hab CLI from source (pinned release)
 FROM golang:1.24-trixie AS hab-builder
@@ -118,4 +118,8 @@ LABEL \
     io.hass.name="Antigravity CLI" \
     io.hass.description="Terminal interface for Google's Antigravity CLI (agy) with deep MCP integration" \
     io.hass.type="addon" \
-    io.hass.version="${BUILD_VERSION}"
+    io.hass.version="${BUILD_VERSION}" \
+    org.opencontainers.image.title="Antigravity CLI" \
+    org.opencontainers.image.description="Terminal interface for Google's Antigravity CLI (agy) with deep MCP integration" \
+    org.opencontainers.image.source="https://github.com/oded996/gemini-cli-home-assistant-addons" \
+    org.opencontainers.image.licenses="Apache-2.0"
